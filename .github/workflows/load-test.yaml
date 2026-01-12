@@ -264,7 +264,7 @@ jobs:
       # Auto-merge PR if tests passed
       # ========================================
       - name: Auto-merge PR
-        if: github.event_name == 'pull_request' && steps.loadtest.outputs.exit_code == '0'
+        if: github.event_name == 'pull_request' && steps.loadtest.outputs.exit_code == '0' && github.head_ref != 'feat/production-hardening'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
