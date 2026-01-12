@@ -27,9 +27,49 @@ permissions:
   pull-requests: write
 
 jobs:
+  # ========================================
+  # Validate - Fail Fast
+  # ========================================
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate YAML syntax
+        run: |
+          echo "Validating YAML files..."
+          find . -name '*.yaml' -o -name '*.yml' | while read file; do
+            echo "  Checking $file"
+            python3 -c "import yaml; yaml.safe_load(open('$file'))" || exit 1
+          done
+          echo "All YAML files are valid"
+
+      - name: Validate Kustomize build
+        run: |
+          echo "Installing kustomize..."
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin/
+
+          echo "Validating kustomize overlays..."
+          kustomize build k8s/overlays/ci > /dev/null
+          echo "Kustomize build successful"
+
+      - name: Validate Python syntax
+        run: |
+          echo "Checking Python syntax..."
+          python3 -m py_compile scripts/run-load-test.py
+          echo "Python syntax valid"
+
+  # ========================================
+  # Load Test - Main Job
+  # ========================================
   load-test:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    needs: validate
 
     steps:
       # ========================================

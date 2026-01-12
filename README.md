@@ -25,27 +25,27 @@ PR opened → k3d cluster → Deploy apps → Run Vegeta → Post results → Pa
 │  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │    │
 │  │  │   Server    │  │   Agent 1   │  │   Agent 2   │  │    │
 │  │  └─────────────┘  └─────────────┘  └─────────────┘  │    │
-│  │                                                      │    │
+│  │                                                     │    │
 │  │  ┌─────────────────────────────────────────────┐    │    │
 │  │  │  NGINX Ingress Controller                   │    │    │
 │  │  │  foo.localhost → foo service                │    │    │
 │  │  │  bar.localhost → bar service                │    │    │
 │  │  └─────────────────────────────────────────────┘    │    │
-│  │                                                      │    │
+│  │                                                     │    │
 │  │  ┌──────────────┐  ┌──────────────┐                 │    │
 │  │  │  foo (x2)    │  │  bar (x2)    │                 │    │
 │  │  │  "foo"       │  │  "bar"       │                 │    │
 │  │  └──────────────┘  └──────────────┘                 │    │
-│  │                                                      │    │
+│  │                                                     │    │
 │  │  ┌─────────────────────────────────────────────┐    │    │
 │  │  │  Prometheus (optional)                      │    │    │
 │  │  │  CPU/Memory metrics                         │    │    │
 │  │  └─────────────────────────────────────────────┘    │    │
 │  └─────────────────────────────────────────────────────┘    │
 │                                                             │
-│  Vegeta ──→ foo.localhost ──→ results-foo.json             │
-│         ──→ bar.localhost ──→ results-bar.json             │
-│         ──→ combined      ──→ results-combined.json        │
+│  Vegeta ──→ foo.localhost ──→ results-foo.json              │
+│         ──→ bar.localhost ──→ results-bar.json              │
+│         ──→ combined      ──→ results-combined.json         │
 └─────────────────────────────────────────────────────────────┘
 ```
 
