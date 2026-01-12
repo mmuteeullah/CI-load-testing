@@ -793,8 +793,8 @@ def main() -> int:
         log("All tests completed successfully", "OK")
         return 0
     else:
-        log("Some tests failed", "WARN")
-        return 0  # Still exit 0 so we can post results to PR
+        log("Some tests failed - PR merge will be blocked", "ERROR")
+        return 1  # Non-zero exit blocks PR merge
 
 
 if __name__ == "__main__":
