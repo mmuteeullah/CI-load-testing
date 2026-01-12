@@ -1,0 +1,65 @@
+# Minimal kube-prometheus-stack config for CI
+# Optimized for fast startup and low resource usage
+
+prometheus:
+  prometheusSpec:
+    # Short retention - CI only needs metrics during test
+    retention: 1h
+    # Faster scrape for load testing
+    scrapeInterval: 10s
+    # Resource limits for CI runner
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+# Disable components not needed for load testing
+grafana:
+  enabled: false
+
+alertmanager:
+  enabled: false
+
+# Keep for container metrics (CPU, memory)
+nodeExporter:
+  enabled: true
+  resources:
+    requests:
+      cpu: 50m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 64Mi
+
+# Keep for pod/deployment metrics
+kubeStateMetrics:
+  enabled: true
+  resources:
+    requests:
+      cpu: 50m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 64Mi
+
+# Disable unused exporters
+kubeApiServer:
+  enabled: false
+
+kubeControllerManager:
+  enabled: false
+
+kubeScheduler:
+  enabled: false
+
+kubeProxy:
+  enabled: false
+
+kubeEtcd:
+  enabled: false
+
+kubeDns:
+  enabled: false
