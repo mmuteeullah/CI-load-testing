@@ -1,5 +1,7 @@
 # CI Load Testing
 
+[![Load Test](https://github.com/mmuteeullah/CI-load-testing/actions/workflows/load-test.yaml/badge.svg)](https://github.com/mmuteeullah/CI-load-testing/actions/workflows/load-test.yaml)
+
 Automated Kubernetes load testing for pull requests using GitHub Actions, k3d, and Vegeta.
 
 ## Overview
