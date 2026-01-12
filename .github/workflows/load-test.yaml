@@ -19,7 +19,7 @@ env:
   NAMESPACE: echo-test
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
 
 jobs:
@@ -198,3 +198,13 @@ jobs:
         if: always()
         run: |
           k3d cluster delete $CLUSTER_NAME || true
+
+      # ========================================
+      # Auto-merge PR if tests passed
+      # ========================================
+      - name: Auto-merge PR
+        if: github.event_name == 'pull_request' && steps.loadtest.outputs.exit_code == '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr merge ${{ github.event.pull_request.number }} --squash --auto
