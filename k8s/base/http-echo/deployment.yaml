@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: http-echo
-          image: hashicorp/http-echo:latest
+          image: hashicorp/http-echo:0.2.3
           args:
             - "-text=hello"
             - "-listen=:5678"
