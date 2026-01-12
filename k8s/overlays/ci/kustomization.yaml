@@ -1,13 +1,13 @@
 # CI Overlay
-# Combines: namespace + foo app + bar app + ingress
+# Combines: base (namespace + http-echo template) + foo app + bar app + ingress
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 namespace: echo-test
 
 resources:
-  # Namespace
-  - ../../base/namespace.yaml
+  # Base resources (namespace)
+  - ../../base
   # Applications (each references base/http-echo template)
   - ../../apps/foo
   - ../../apps/bar
