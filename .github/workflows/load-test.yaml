@@ -1,6 +1,8 @@
 name: K8s Load Test
 
 on:
+  push:
+    branches: [main, feat/production-hardening]
   pull_request:
     branches: [main]
   workflow_dispatch:
