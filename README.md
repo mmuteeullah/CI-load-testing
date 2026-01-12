@@ -14,33 +14,6 @@ This project provisions a multi-node Kubernetes cluster on every PR, deploys htt
 PR opened → k3d cluster → Deploy apps → Run Vegeta → Post results → Pass/Fail
 ```
 
-## Design Decisions
-
-### Why k3d over KinD?
-- **Startup time**: k3d creates clusters in ~20s vs KinD's ~60s
-- **Multi-node**: Native YAML config for agents
-- **Ingress**: Built-in loadbalancer for port mapping
-- **CI-optimized**: Designed for ephemeral clusters
-
-### Why NGINX Ingress over Traefik?
-- **Production parity**: NGINX is the most common production ingress
-- **Annotations**: Rich configuration via annotations (rate limiting, timeouts, retries)
-- **Familiarity**: Widely understood by ops teams
-
-### Why Vegeta over k6/hey?
-- **JSON output**: Native structured output for parsing
-- **Deterministic**: Constant rate, no warmup needed
-- **Lightweight**: Single binary, fast startup
-
-### Assumptions & Tradeoffs
-
-| Assumption | Tradeoff |
-|------------|----------|
-| CI runner has Docker | Required for k3d |
-| 2GB+ RAM available | Prometheus is memory-hungry |
-| TLS not required | Simplifies ingress config |
-| 30s test duration | Enough for latency curves |
-
 ## Architecture
 
 ```

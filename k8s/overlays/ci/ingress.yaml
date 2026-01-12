@@ -6,16 +6,6 @@ metadata:
   namespace: echo-test
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    # Rate limiting
-    nginx.ingress.kubernetes.io/limit-rps: "100"
-    nginx.ingress.kubernetes.io/limit-connections: "50"
-    # Timeouts
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "10"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "30"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "30"
-    # Retries on failure
-    nginx.ingress.kubernetes.io/proxy-next-upstream: "error timeout"
-    nginx.ingress.kubernetes.io/proxy-next-upstream-tries: "3"
 spec:
   ingressClassName: nginx
   rules:
