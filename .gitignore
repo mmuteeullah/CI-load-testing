@@ -1,0 +1,22 @@
+# Results directory (generated during CI)
+results/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Local testing
+*.log
+*.bin

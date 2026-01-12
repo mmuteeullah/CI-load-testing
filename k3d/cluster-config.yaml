@@ -1,0 +1,30 @@
+# k3d cluster configuration for CI load testing
+# Creates a multi-node cluster with 1 server + 2 agents
+# Disables Traefik to use NGINX Ingress instead
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: load-test-cluster
+servers: 1
+agents: 2
+kubeAPI:
+  hostPort: "6443"
+ports:
+  # Map localhost:80 to loadbalancer for HTTP ingress
+  - port: 80:80
+    nodeFilters:
+      - loadbalancer
+  # Map localhost:443 to loadbalancer for HTTPS ingress
+  - port: 443:443
+    nodeFilters:
+      - loadbalancer
+options:
+  k3s:
+    extraArgs:
+      # Disable Traefik - we'll install NGINX Ingress instead
+      - arg: --disable=traefik
+        nodeFilters:
+          - server:*
+  kubeconfig:
+    updateDefaultKubeconfig: true
+    switchCurrentContext: true
