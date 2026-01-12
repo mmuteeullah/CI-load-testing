@@ -264,3 +264,4 @@ docker info
 k3d cluster list
 ```
 # Test fail-rate feature
+# Testing 10% fail rate
