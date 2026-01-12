@@ -18,6 +18,10 @@ env:
   CLUSTER_NAME: load-test-cluster
   NAMESPACE: echo-test
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   load-test:
     runs-on: ubuntu-latest
