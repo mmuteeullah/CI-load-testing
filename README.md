@@ -177,6 +177,7 @@ k3d cluster delete load-test-cluster
 |-----------|---------|-------------|
 | `--rate` | 100 | Requests per second |
 | `--duration` | 30s | Test duration |
+| `--fail-rate` | 10 | Percentage of requests to fail (0-100) |
 | `--namespace` | echo-test | Kubernetes namespace |
 | `--skip-metrics` | false | Skip Prometheus metrics |
 
@@ -265,5 +266,3 @@ Docker must be running. Check:
 docker info
 k3d cluster list
 ```
-# Test fail-rate feature
-# Testing 10% fail rate
