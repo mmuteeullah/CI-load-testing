@@ -125,7 +125,7 @@ jobs:
             --namespace $NAMESPACE \
             --rate ${{ github.event.inputs.rate || '100' }} \
             --duration ${{ github.event.inputs.duration || '30s' }} \
-            --fail-rate ${{ github.event.inputs.fail_rate || '0' }} \
+            --fail-rate ${{ github.event.inputs.fail_rate || '10' }} \
             --output-dir ./results
           EXIT_CODE=$?
           echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
