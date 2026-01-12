@@ -4,6 +4,8 @@
 
 Automated Kubernetes load testing for pull requests using GitHub Actions, k3d, and Vegeta.
 
+**Time to complete:** ~2 hours
+
 ## Overview
 
 This project provisions a multi-node Kubernetes cluster on every PR, deploys http-echo services, runs load tests, and posts results as a PR comment. PRs cannot be merged until load tests pass.
