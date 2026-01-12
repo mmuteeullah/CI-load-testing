@@ -41,6 +41,7 @@ class Config:
     timeout: int = 180
     skip_metrics: bool = False
     prometheus_port: int = 9090
+    fail_rate: int = 0  # Percentage of requests to non-existent endpoint (0-100)
 
 
 # =============================================================================
@@ -423,9 +424,34 @@ def run_vegeta_test(
         return TestResult(name=name, success=False, error_message=str(e))
 
 
+def generate_targets(config: Config) -> str:
+    """Generate weighted targets based on fail_rate."""
+    targets = []
+
+    # Calculate weights: fail_rate% go to fail.localhost
+    # Remaining split evenly between foo and bar
+    fail_weight = config.fail_rate
+    success_weight = 100 - fail_weight
+    foo_weight = success_weight // 2
+    bar_weight = success_weight - foo_weight
+
+    # Add targets proportionally (using 100 entries for percentage accuracy)
+    for _ in range(foo_weight):
+        targets.append("GET http://localhost/\nHost: foo.localhost\n")
+
+    for _ in range(bar_weight):
+        targets.append("GET http://localhost/\nHost: bar.localhost\n")
+
+    for _ in range(fail_weight):
+        targets.append("GET http://localhost/\nHost: fail.localhost\n")
+
+    return "\n".join(targets)
+
+
 def run_combined_test(config: Config) -> TestResult:
-    """Run combined test with alternating foo/bar targets."""
-    log(f"Running combined load test ({config.rate} req/s for {config.duration})")
+    """Run combined test with alternating foo/bar targets and optional failures."""
+    fail_info = f", {config.fail_rate}% fail" if config.fail_rate > 0 else ""
+    log(f"Running combined load test ({config.rate} req/s for {config.duration}{fail_info})")
 
     name = "combined"
     json_path = config.output_dir / f"results-{name}.json"
@@ -433,8 +459,11 @@ def run_combined_test(config: Config) -> TestResult:
     targets_path = config.output_dir / "targets-combined.txt"
 
     try:
-        # Create targets file
-        targets_content = """GET http://localhost/
+        # Create targets file with optional failure injection
+        if config.fail_rate > 0:
+            targets_content = generate_targets(config)
+        else:
+            targets_content = """GET http://localhost/
 Host: foo.localhost
 
 GET http://localhost/
@@ -705,8 +734,13 @@ def parse_args() -> Config:
     parser.add_argument("--output-dir", default="./results", help="Output directory")
     parser.add_argument("--timeout", type=int, default=180, help="Wait timeout in seconds")
     parser.add_argument("--skip-metrics", action="store_true", help="Skip Prometheus metrics")
+    parser.add_argument("--fail-rate", type=int, default=0,
+                        help="Percentage of requests to fail (0-100), sent to non-existent endpoint")
 
     args = parser.parse_args()
+
+    # Validate fail_rate
+    fail_rate = max(0, min(100, args.fail_rate))
 
     return Config(
         namespace=args.namespace,
@@ -714,7 +748,8 @@ def parse_args() -> Config:
         duration=args.duration,
         output_dir=Path(args.output_dir),
         timeout=args.timeout,
-        skip_metrics=args.skip_metrics
+        skip_metrics=args.skip_metrics,
+        fail_rate=fail_rate
     )
 
 
@@ -729,6 +764,7 @@ def main() -> int:
     log(f"Namespace: {config.namespace}")
     log(f"Rate: {config.rate} req/s")
     log(f"Duration: {config.duration}")
+    log(f"Fail Rate: {config.fail_rate}%")
     log(f"Output: {config.output_dir}")
     log("")
 
