@@ -47,21 +47,26 @@ jobs:
           done
           echo "All YAML files are valid"
 
-      - name: Validate Kustomize build
-        run: |
-          echo "Installing kustomize..."
-          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
-          sudo mv kustomize /usr/local/bin/
-
-          echo "Validating kustomize overlays..."
-          kustomize build k8s/overlays/ci > /dev/null
-          echo "Kustomize build successful"
-
       - name: Validate Python syntax
         run: |
           echo "Checking Python syntax..."
           python3 -m py_compile scripts/run-load-test.py
           echo "Python syntax valid"
+
+      - name: Validate K8s manifests
+        run: |
+          # Install kustomize
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin/
+
+          # Install kubeconform
+          wget -q https://github.com/yannh/kubeconform/releases/download/v0.6.4/kubeconform-linux-amd64.tar.gz
+          tar -xzf kubeconform-linux-amd64.tar.gz
+
+          # Build + validate in one pass
+          echo "Building and validating K8s manifests..."
+          kustomize build k8s/overlays/ci | ./kubeconform -strict -summary
+          echo "All manifests valid"
 
   # ========================================
   # Load Test - Main Job
@@ -186,6 +191,14 @@ jobs:
           else
             echo "content=## Load Test Results\n\n**Error:** No report generated. Check workflow logs." >> $GITHUB_OUTPUT
           fi
+
+      - name: Upload results artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: load-test-results
+          path: ./results/
+          retention-days: 7
 
       - name: Comment on PR
         if: always() && github.event_name == 'pull_request'
