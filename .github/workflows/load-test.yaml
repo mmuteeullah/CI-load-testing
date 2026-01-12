@@ -152,7 +152,8 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const body = `${{ steps.report.outputs.content }}`;
+            const fs = require('fs');
+            const body = fs.readFileSync('./results/report.md', 'utf8');
 
             // Find existing comment
             const { data: comments } = await github.rest.issues.listComments({
